@@ -6,10 +6,12 @@ const dotenv = require("dotenv").config();
 
 const app = express();
 
-connectDB();
+// connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use("/api/tasks", require("./backend/routes/tasksRoutes"));
 
 const port = process.env.PORT || 5050;
 app.listen(port, () => console.log(`Server started on port ${port}`));
