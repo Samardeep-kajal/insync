@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const taskSchema = mongoose.Schema(
   {
-    title: {
+    text: {
       type: String,
       required: [true, "Please add task title"],
     },
     type: {
       type: String,
       enum: ["monthly", "weekly", "daily"],
-      required: [true, "Please add the type"],
+      required: [true, "Please add the lifespan of task"],
     },
     // dueDate: {
     //   type: Date,
@@ -17,6 +17,7 @@ const taskSchema = mongoose.Schema(
     completed: {
       type: Boolean,
       default: false,
+      required: [true, "Please add the boolean flag"],
     },
   },
   {

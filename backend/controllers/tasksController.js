@@ -1,41 +1,73 @@
-const express = require("express");
-const router = express.Router();
+const asyncHandler = require("express-async-handler");
+const Task = require("../models/taskModel");
 
 /* Tasks Endpoint Controller */
 
 // @desc Get Tasks
 // @route /api/tasks
 // @access Private
-const getTasks = (req, res) => {
-  res.status(200).json({ message: "Get tasks" });
-};
+const getTasks = asyncHandler(async (req, res) => {
+  const tasks = await Task.find();
+
+  res.status(200).json(tasks);
+});
 
 // @desc Get specific task
 // @route /api/tasks
 // @access Private
-const getTask = (req, res) => {
-  res.status(200).json({ message: `Got the specific task: ${req.params.id}` });
-};
+const getTask = asyncHandler(async (req, res) => {
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    res.status(400);
+    throw new Error("Task not found");
+  }
+  res.status(200).json(task);
+});
 
 // @desc Add Task
 // @route /api/tasks
 // @access Private
-const setTask = (req, res) => {
-  res.status(200).json({ message: "Set tasks" });
-};
+const setTask = asyncHandler(async (req, res) => {
+  const task = await Task.create({
+    text: req.body.text,
+    type: req.body.type,
+    completed: req.body.completed,
+  });
+
+  res.status(200).json(task);
+});
 
 // @desc Update Task
 // @route /api/tasks/:id
 // @access Private
-const updateTask = (req, res) => {
-  res.status(200).json({ message: `Update task ${req.params.id}` });
-};
+const updateTask = asyncHandler(async (req, res) => {
+  const task = await Task.findById(req.params.id);
+
+  if (!task) {
+    res.status(400);
+    throw new Error("Task not found");
+  }
+
+  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.status(200).json(updatedTask);
+});
 
 // @desc Delete Task
 // @route /api/tasks/:id
 // @access Private
-const deleteTask = (req, res) => {
-  res.status(200).json({ message: `Delete tasks ${req.params.id}` });
-};
+const deleteTask = asyncHandler(async (req, res) => {
+  const task = await Task.findById(req.params.id);
+
+  if (!task) {
+    res.status(400);
+    throw new Error("Task not found");
+  }
+
+  await task.deleteOne();
+
+  res.status(200).json({ id: req.params.id });
+});
 
 module.exports = { getTasks, getTask, setTask, updateTask, deleteTask };
